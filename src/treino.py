@@ -9,7 +9,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from sklearn.compose import TransformedTargetRegressor
-from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.inspection import permutation_importance
 from sklearn.metrics import (ConfusionMatrixDisplay, accuracy_score, classification_report,
                              confusion_matrix, mean_absolute_error, mean_squared_error, r2_score)
@@ -17,6 +16,8 @@ from sklearn.model_selection import GridSearchCV, KFold, StratifiedKFold, train_
 from sklearn.neural_network import MLPClassifier, MLPRegressor
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
+
+from random_forest import RandomForestClassifierDoZero, RandomForestRegressorDoZero
 
 RAIZ = Path(__file__).resolve().parent.parent
 DADOS = RAIZ / "data" / "02_treino_sinais_vitais_com_label.txt"
@@ -76,10 +77,10 @@ def main():
     kf = KFold(5, shuffle=True, random_state=SEMENTE)
     skf = StratifiedKFold(5, shuffle=True, random_state=SEMENTE)
 
-    rf_reg = ajustar("rf_regressao", RandomForestRegressor(n_estimators=300, random_state=SEMENTE),
+    rf_reg = ajustar("rf_regressao", RandomForestRegressorDoZero(n_estimators=100, random_state=SEMENTE),
                      {"max_depth": [None, 10], "min_samples_leaf": [1, 3], "max_features": [1, None]},
                      X_tr, g_tr, kf, "neg_root_mean_squared_error")
-    rf_clf = ajustar("rf_classificacao", RandomForestClassifier(n_estimators=300, random_state=SEMENTE),
+    rf_clf = ajustar("rf_classificacao", RandomForestClassifierDoZero(n_estimators=100, random_state=SEMENTE),
                      {"criterion": ["gini", "entropy"], "max_depth": [None, 10], "min_samples_leaf": [1, 3],
                       "max_features": [1, None], "class_weight": [None, "balanced"]},
                      X_tr, c_tr, skf, "f1_macro")
